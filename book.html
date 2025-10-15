@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Table with Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        img {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        tr {
+            transition: background-color 0.3s, transform 0.2s;
+            cursor: pointer;
+        }
+
+        tr:hover {
+            background-color: #e9f7ef;
+            transform: scale(1.01);
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        a:hover {
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📚 Book List</h2>
+
+    <table>
+        <tr>
+            <th>Cover</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Price</th>
+        </tr>
+
+        <!-- Book 1 -->
+        <tr onclick="window.open('https://www.goodreads.com/book/show/40121378-atomic-habits', '_blank')">
+            <td>
+                <img src="https://images-na.ssl-images-amazon.com/images/I/91bYsX41DVL.jpg" alt="Atomic Habits">
+            </td>
+            <td><a href="https://www.goodreads.com/book/show/40121378-atomic-habits" target="_blank">Atomic Habits</a></td>
+            <td>James Clear</td>
+            <td>$14.99</td>
+        </tr>
+
+        <!-- Book 2 -->
+        <tr onclick="window.open('https://www.goodreads.com/book/show/865.The_Alchemist', '_blank')">
+            <td>
+                <img src="https://images-na.ssl-images-amazon.com/images/I/71aFt4+OTOL.jpg" alt="The Alchemist">
+            </td>
+            <td><a href="https://www.goodreads.com/book/show/865.The_Alchemist" target="_blank">The Alchemist</a></td>
+            <td>Paulo Coelho</td>
+            <td>$10.50</td>
+        </tr>
+
+        <!-- Book 3 -->
+        <tr onclick="window.open('https://www.goodreads.com/book/show/23692271-sapiens', '_blank')">
+            <td>
+                <img src="https://images-na.ssl-images-amazon.com/images/I/713jIoMO3UL.jpg" alt="Sapiens">
+            </td>
+            <td><a href="https://www.goodreads.com/book/show/23692271-sapiens" target="_blank">Sapiens</a></td>
+            <td>Yuval Noah Harari</td>
+            <td>$18.00</td>
+        </tr>
+
+        <!-- Book 4 -->
+        <tr onclick="window.open('https://www.goodreads.com/book/show/3735293-clean-code', '_blank')">
+            <td>
+
+
+
+                

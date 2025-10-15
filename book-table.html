@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Book List — HTML Table</title>
+  <style>
+    :root{
+      --bg:#f7f9fc; --card:#ffffff; --muted:#6b7280; --accent:#2563eb;
+      --success:#10b981; --danger:#ef4444;
+    }
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg); margin:24px; color:#111827;
+    }
+    .wrap{max-width:1100px;margin:0 auto;}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
+    h1{font-size:20px;margin:0;}
+    .controls{margin-left:auto;display:flex;gap:8px;align-items:center;}
+    .search{
+      padding:8px 10px;border-radius:8px;border:1px solid #e6e9ef;background:#fff;min-width:220px;
+    }
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(15,23,42,0.06);}
+    table{width:100%;border-collapse:collapse;font-size:14px;}
+    thead th{
+      text-align:left;padding:10px 12px;font-weight:600;color:var(--muted);user-select:none;
+      font-size:13px;
+    }
+    tbody td{padding:12px;border-top:1px solid #f1f5f9;vertical-align:middle;}
+    .cover{width:56px;height:78px;object-fit:cover;border-radius:6px;border:1px solid #eef2ff;}
+    .title{font-weight:600;}
+    .meta{color:var(--muted);font-size:13px}
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;font-size:12px;font-weight:600}
+    .in-stock{background:rgba(16,185,129,0.12);color:var(--success)}
+    .out-stock{background:rgba(239,68,68,0.12);color:var(--danger)}
+    th.sortable{cursor:pointer}
+    th .sort-ind{margin-left:8px;font-size:11px;color:#9ca3af}
+    @media (max-width:800px){
+      table thead{display:none}
+      tbody td{display:block;padding:10px 0;}
+      tbody tr{margin-bottom:12px;background:#fff;padding:12px;border-radius:10px;box-shadow:0 4px 12px rgba(2,6,23,0.04)}
+      td .row{display:flex;gap:12px;align-items:flex-start}
+      td .col{flex:1}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Book Catalog</h1>
+      <div class="controls">
+        <input id="search" class="search" placeholder="Search by title or author..." />
+      </div>
+    </header>
+
+    <div class="card">
+      <table id="bookTable" aria-describedby="book-catalog">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="sortable" data-key="title">Title <span class="sort-ind">↕</span></th>
+            <th class="sortable" data-key="author">Author <span class="sort-ind">↕</span></th>
+            <th class="sortable" data-key="year">Year <span class="sort-ind">↕</span></th>
+            <th class="sortable" data-key="genre">Genre <span class="sort-ind">↕</span></th>
+            <th class="sortable" data-key="price">Price <span class="sort-ind">↕</span></th>
+            <th>Availability</th>
+            <th class="sortable" data-key="rating">Rating <span class="sort-ind">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- rows inserted by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Sample book data
+    const books = [
+      { title: "Atomic Habits", author: "James Clear", year: 2018, genre: "Self-help", price: 14.99, available: true, rating: 4.7, cover: "https://via.placeholder.com/60x78?text=AH" },
+      { title: "The Pragmatic Programmer", author: "Andrew Hunt", year: 1999, genre: "Software", price: 39.95, available: true, rating: 4.6, cover: "https://via.placeholder.com/60x78?text=TPP" },
+      { title: "Clean Code", author: "Robert C. Martin", year: 2008, genre: "Software", price: 32.50, available: false, rating: 4.5, cover: "https://via.placeholder.com/60x78?text=CC" },
+      { title: "Sapiens", author: "Yuval Noah Harari", year: 2011, genre: "History", price: 18.00, available: true, rating: 4.4, cover: "https://via.placeholder.com/60x78?text=SA" },
+      { title: "1984", author: "George Orwell", year: 1949, genre: "Dystopia", price: 9.99, available: true, rating: 4.2, cover: "https://via.placeholder.com/60x78?text=1984" },
+      { title: "Deep Work", author: "Cal Newport", year: 2016, genre: "Productivity", price: 16.00, available: false, rating: 4.3, cover: "https://via.placeholder.com/60x78?text=DW" },
+      { title: "The Alchemist", author: "Paulo Coelho", year: 1988, genre: "Fiction", price: 10.50, available: true, rating: 4.0, cover: "https://via.placeholder.com/60x78?text=TA" },
+      { title: "You Don't Know JS", author: "Kyle Simpson", year: 2014, genre: "Programming", price: 24.99, available: true, rating: 4.5, cover: "https://via.placeholder.com/60x78?text=YDKJS" }
+    ];
+
+    // render function
+    function renderRows(list){
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      for(const b of list){
+        const tr = document.createElement('tr');
+
+        // cover cell
+        const tdCover = document.createElement('td');
+        tdCover.innerHTML = `<img class="cover" src="${b.cover}" alt="Cover of ${escapeHtml(b.title)}">`;
+        tr.appendChild(tdCover);
+
+        // title
+        const tdTitle = document.createElement('td');
+        tdTitle.innerHTML = `<div class="title">${escapeHtml(b.title)}</div><div class="meta">${escapeHtml(b.author)}</div>`;
+        tr.appendChild(tdTitle);
+
+        // author
+        const tdAuthor = document.createElement('td');
+        tdAuthor.textContent = b.author;
+        tr.appendChild(tdAuthor);
+
+        // year
+        const tdYear = document.createElement('td');
+        tdYear.textContent = b.year;
+        tr.appendChild(tdYear);
+
+        // genre
+        const tdGenre = document.createElement('td');
+        tdGenre.textContent = b.genre;
+        tr.appendChild(tdGenre);
+
+        // price
+        const tdPrice = document.createElement('td');
+        tdPrice.textContent = `$${Number(b.price).toFixed(2)}`;
+        tr.appendChild(tdPrice);
+
+        // availability
+        const tdAvail = document.createElement('td');
+        tdAvail.innerHTML = b.available
+          ? `<span class="badge in-stock">In stock</span>`
+          : `<span class="badge out-stock">Out of stock</span>`;
+        tr.appendChild(tdAvail);
+
+        // rating
+        const tdRating = document.createElement('td');
+        tdRating.textContent = b.rating.toFixed(1);
+        tr.appendChild(tdRating);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    // basic search/filter
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = books.filter(b => 
+        b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.genre.toLowerCase().includes(q)
+      );
+      renderRows(filtered);
+    });
+
+    // sorting
+    let currentSort = { key: null, dir: 1 }; // dir: 1 asc, -1 desc
+    document.querySelectorAll('th.sortable').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.key;
+        if(currentSort.key === key) currentSort.dir *= -1;
+        else { currentSort.key = key; currentSort.dir = 1; }
+
+        const sorted = [...books].sort((a,b) => {
+          const A = a[key], B = b[key];
+          if (typeof A === 'string') return A.localeCompare(B) * currentSort.dir;
+          return (A === B) ? 0 : (A > B ? 1 : -1) * currentSort.dir;
+        });
+
+        // update indicator
+        document.querySelectorAll('th.sortable .sort-ind').forEach(el => el.textContent = '↕');
+        const ind = th.querySelector('.sort-ind');
+        ind.textContent = currentSort.dir === 1 ? '▲' : '▼';
+
+        // if a search is active, sort filtered list instead
+        const q = searchInput.value.trim().toLowerCase();
+        const baseList = q ? sorted.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.genre.toLowerCase().includes(q)) : sorted;
+
+        renderRows(baseList);
+      });
+    });
+
+    // helper to escape HTML inserted into attributes/text
+    function escapeHtml(text){
+      const map = { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' };
+      return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // initial render
+    renderRows(books);
+  </script>
+</body>
+</html>
+
